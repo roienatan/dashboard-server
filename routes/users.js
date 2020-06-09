@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 const { DB_URL, DB_NAME } = require('../constants');
+const auth = require('../auth');
 
 router.get('/getUsers', (req, res) => {
   MongoClient.connect(DB_URL, { useNewUrlParser: true }, (err, db) => {
@@ -16,8 +17,7 @@ router.get('/getUsers', (req, res) => {
 })
 
 
-// need to add 'auth.isAuthenticated'
-router.post('/addUser', (req, res) => {
+router.post('/addUser', auth.isAuthenticated, (req, res) => {
   MongoClient.connect(DB_URL, { useNewUrlParser: true }, (err, db) => {
     if (err) throw err;
     const dbo = db.db(DB_NAME);
