@@ -13,7 +13,8 @@ router.get('/login/username/:username/password/:password', (req, res) => {
             if (err) throw err;
             const { username, password, ...userDetails } = user[0];
             if (req.params.password === password) {
-                return res.status(200).json({ token: auth.generateToken(), userDetails});
+                const token = userDetails.privileges === 'admin' ? auth.generateAdminToken(userDetails._id) : auth.generateUserToken(userDetails._id);
+                return res.status(200).json({ token: token, userDetails});
             }
             else return res.status(401).json({ message: 'Invalid username or password' });
         })
